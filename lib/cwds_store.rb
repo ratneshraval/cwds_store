@@ -3,7 +3,7 @@
 require 'cwds_store/version'
 require 'redis/store'
 
-module CwdsStore
+class CwdsStore
   class << self < Redis::Store
     def initialize(options = {})
       super
