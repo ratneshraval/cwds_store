@@ -3,12 +3,12 @@
 require 'cwds_store/version'
 require 'redis/store'
 
-class CwdsStore
-  class << self < Redis::Store
-    def initialize(options = {})
-      super
-    end
+class CwdsStore < Redis::Store
+  def initialize(options = {})
+    super
+    puts 'initializing'
   end
-
-  class Error < StandardError; end
 end
+
+#   class Error < StandardError; end
+# end
