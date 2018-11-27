@@ -16,6 +16,7 @@ Metrics/LineLength:
   Max: 100
 
 Metrics/MethodLength:
+  Max: 30
   Exclude:
     - 'spec/**/*.rb'
 
