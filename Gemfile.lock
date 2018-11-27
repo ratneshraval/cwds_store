@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cwds_store (0.1.0)
+    cwds_store (0.1.1)
       redis-store (~> 1.6)
 
 GEM
