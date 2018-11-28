@@ -78,5 +78,28 @@ module CwdsStore
 
       expect(output).to eql expected_output
     end
+
+    it 'options_merge with transformed values verification' do
+      cwds_store_object = Store.new({})
+      output = cwds_store_object.options_merge(
+        cwds_store_object.transform_options({
+                                              host: 'xyz',
+                                              port: 9300
+      }))
+
+      expected_output = {
+        servers: [
+          {
+            host: 'xyz',
+            port: 9300,
+            db: 0,
+            namespace: ''
+          }
+        ],
+        expire_after: 60
+      }
+
+      expect(output).to eql expected_output
+    end
   end
 end
