@@ -17,14 +17,17 @@ module CwdsStore
     def get_session(env, session_id)
       redis.get(session_id)
     end
+    alias find_session get_session
 
     def set_session(env, session_id, session, options)
       redis.set(session_id, session)
     end
+    alias write_session set_session
 
     def destroy_session(env, session_id, options)
       redis.del(session_id)
     end
+    alias delete_session destroy_session
 
     def transform_options(options)
       {
