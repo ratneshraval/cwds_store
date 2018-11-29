@@ -2,60 +2,47 @@
 
 module CwdsStore
   class Store < ActionDispatch::Session::AbstractStore
+    USE_INDIFFERENT_ACCESS = defined?(ActiveSupport).freeze
+    SESSION_EXPIRY = 4.hours
 
     attr_reader :redis
 
     def initialize(app, options = {})
       super
 
-      transformed_options = transform_options(options)
-      # super(options_merge(incoming_options))
-
-      @redis = Redis::Store.new transformed_options
+      @redis = Redis::Store.new(
+        {
+          host: options[:host],
+          port: options[:port],
+          db: 0,
+          namespace: 'cares:session'
+        }
+      )
     end
 
     def get_session(env, session_id)
-      redis.get(session_id)
+      session_data = load_session_from_redis(session_id)
+      session_id && session_data ? [session_id, session_data] : session_default_values
     end
     alias find_session get_session
 
+    def load_session_from_redis(sid)
+      @redis.get(sid)
+    end
+    def session_default_values
+      [generate_sid, USE_INDIFFERENT_ACCESS ? {}.with_indifferent_access : {}]
+    end
+
     def set_session(env, session_id, session, options)
-      redis.set(session_id, session)
+      @redis.setex(session_id, SESSION_EXPIRY, session)
+      session_id
     end
     alias write_session set_session
 
     def destroy_session(env, session_id, options)
-      redis.del(session_id)
+      @redis.del(session_id)
+      (options || {})[:drop] ? nil : generate_sid
     end
     alias delete_session destroy_session
-
-    def transform_options(options)
-      {
-        servers: [
-          {
-            host: options[:host],
-            port: options[:port],
-            db: 0,
-            namespace: ''
-          }
-        ]
-      } unless options.nil?
-    end
-
-    def options_merge(options)
-      base_options = {
-        servers: [
-          {
-            host: 'localhost',
-            port: 6379,
-            db: 0,
-            namespace: ''
-          }
-        ],
-        expire_after: 60
-      }
-      base_options.merge!(options) unless options.nil?
-      base_options
-    end
   end
 end
