@@ -3,19 +3,36 @@
 module CwdsStore
   class Store < ActionDispatch::Session::AbstractStore
     USE_INDIFFERENT_ACCESS = defined?(ActiveSupport).freeze
-    SESSION_EXPIRY = 4.hours
 
     attr_reader :redis
 
     def initialize(app, options = {})
       super
 
+      # works: host, port, namespace
+      # doesn't work: expire_after
       @redis = Redis::Store.new(
         {
           host: options[:host],
           port: options[:port],
           db: 0,
-          namespace: 'cares:session'
+          namespace: 'test-session',
+          expire_after: 3.minutes
+        }
+      )
+
+      # doesn't work at all
+      @redis = Redis::Store.new(
+        {
+          servers: [
+            {
+              host: options[:host],
+              port: options[:port],
+              db: 0,
+              namespace: 'test-session'
+            }
+          ],
+          expire_after: 3.minutes
         }
       )
     end
@@ -31,7 +48,7 @@ module CwdsStore
     end
 
     def set_session(env, session_id, session, options)
-      @redis.setex(session_id, SESSION_EXPIRY, session)
+      @redis.set(session_id, session)
       session_id
     end
     alias write_session set_session
