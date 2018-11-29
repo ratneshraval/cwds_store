@@ -21,14 +21,11 @@ module CwdsStore
     end
 
     def get_session(env, session_id)
-      session_data = load_session_from_redis(session_id)
+      session_data = @redis.get(session_id)
       session_id && session_data ? [session_id, session_data] : session_default_values
     end
     alias find_session get_session
 
-    def load_session_from_redis(sid)
-      @redis.get(sid)
-    end
     def session_default_values
       [generate_sid, USE_INDIFFERENT_ACCESS ? {}.with_indifferent_access : {}]
     end
