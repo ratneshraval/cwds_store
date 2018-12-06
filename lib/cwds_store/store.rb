@@ -2,6 +2,8 @@
 
 module CwdsStore
   class Store < ActionDispatch::Session::RedisStore
+    EXPIRATION_TIME = 4.hours
+
     def initialize(app, options = {})
       merged_options = options_merge(transform_options(options))
       super(app, merged_options)
@@ -23,7 +25,7 @@ module CwdsStore
     def options_merge(options)
       base_options = {
         # servers: [],
-        expire_after: 4.hours
+        expire_after: EXPIRATION_TIME
       }
       base_options.merge!(options) unless options.nil?
       base_options
