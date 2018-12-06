@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'redis-store'
 
 module CwdsStore
   RSpec.describe Store do
