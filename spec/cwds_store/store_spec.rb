@@ -8,7 +8,7 @@ module CwdsStore
       expect(CwdsStore::VERSION).not_to be nil
     end
 
-    it 'parent class is ActionDispatch::Session::AbstractStore' do
+    it 'has a parent class of ActionDispatch::Session::AbstractStore' do
       cwds_store_object = Store.new({})
       expect(cwds_store_object.class.superclass).to eql ActionDispatch::Session::RedisStore
     end
